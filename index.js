@@ -1,4 +1,5 @@
 const fs = require("fs");
+const math = require("mathjs");
 const fileNames = `a_example.txt
  b_read_on.txt
  c_incunabula.txt
@@ -6,7 +7,7 @@ const fileNames = `a_example.txt
  e_so_many_books.txt
  f_libraries_of_the_world.txt`
   .split("\n")
-//   .slice(0, 1)
+  //   .slice(0, 1)
   .filter(t => t && !t.includes(".out"))
   .map(fileName => fileName.trim())
   .map(solveForFile);
@@ -58,13 +59,15 @@ function solveForFile(fileName) {
     const Wbook = 3;
     const WtoSign = 90;
 
-    const booksScore = libBooks =>
-      booksRankWait *
-      libBooks.reduce((acc, l) => {
-        if (scannedBooks[l]) return acc;
-        scannedBooks[l] = true;
-        return (acc += scoreOfBooks[l]);
-      }, 0);
+    const booksScore = libBooks => {
+    //   const sum = libBooks.reduce((acc, l) => {
+    //     if (scannedBooks[l]) return (acc += scoreOfBooks[l] * 0.3);
+    //     scannedBooks[l] = true;
+    //     return (acc += scoreOfBooks[l] * 1.7);
+    //   }, 0);
+      scores = libBooks.map(l => scoreOfBooks[l]);
+      return math.mean(scores)/math.variance(scores);
+    };
 
     const orderByDate = librariesArr.sort((a, b) => {
       aRank =
@@ -90,7 +93,7 @@ function solveForFile(fileName) {
         .filter(b => !scannedBooks[b])
         .sort((a, b) => scoreOfBooks[b] - scoreOfBooks[a])
         .slice(0, booksToSendCount)
-        .map(d=> (scannedBooks[d]=true,d));
+        .map(d => ((scannedBooks[d] = true), d));
 
       booksToSendCount = _local.length;
       if (booksToSendCount != 0) {
@@ -98,7 +101,7 @@ function solveForFile(fileName) {
         const row1 = _local.join(" ");
         ansArr.push(row0, row1);
       }
-    //   console.log(scannedBooks, _local);
+      //   console.log(scannedBooks, _local);
     });
     ansArr.unshift(ansArr.length / 2);
 
