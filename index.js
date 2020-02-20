@@ -59,13 +59,17 @@ function solveForFile(fileName) {
     scoreOfBooks
   }) {
     const orderByDate = libConfigs
-      .filter(d => d.libDaysToSign < scaningDays / 2)
-      .sort((a, b) => a.libDaysToSign - b.libDaysToSign);
+      //   .filter(d => d.libDaysToSign < scaningDays / 2)
+      .sort((a, b) => {
+          // a.libDaysToSign - b.libDaysToSign;
+          aRank = a.libBooksCounts - a.libDaysToSign;
+          bRank = b.libBooksCounts - b.libDaysToSign;
+          return bRank - aRank 
+      });
 
     const ansArr = [orderByDate.length];
     orderByDate.forEach(lib => {
-      let booksToSendCount =
-        (scaningDays - lib.libDaysToSign) * lib.libBooksPerDay;
+      let booksToSendCount = scaningDays * lib.libBooksPerDay;
       booksToSendCount = Math.min(booksToSendCount, lib.libBooksCounts);
 
       const row0 = lib.libIndex + " " + booksToSendCount;
