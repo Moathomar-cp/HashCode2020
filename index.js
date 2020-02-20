@@ -60,41 +60,42 @@ function solveForFile(fileName) {
   }) {
     const booksScore = libBooks =>
       libBooks.reduce((acc, l) => (acc += scoreOfBooks[l]), 0);
-    const Wbook = 70;
-    const WtoSign = 20;
+
+    const Wbook = 50;
+    const WtoSign = 5;
     const WBookRank = 10;
-    const orderByDate = libConfigs
-      //   .filter(d => d.libDaysToSign < scaningDays / 2)
+    const orderByDate = libConfigs.sort((a, b) => {
+      aRank =
+        Wbook * a.libBooksCounts -
+        WtoSign * a.libDaysToSign +
+        (booksScore(a.libBookIds) / a.libBooksCounts) * WBookRank;
+      bRank =
+        Wbook * b.libBooksCounts -
+        WtoSign * b.libDaysToSign +
+        (booksScore(b.libBookIds) / b.libBooksCounts) * WBookRank;
+      return bRank - aRank;
+    });
 
-      .sort((a, b) => {
-        aRank =
-          Wbook * a.libBooksCounts -
-          WtoSign * a.libDaysToSign +
-          (booksScore(a.libBookIds) / a.libBooksCounts) * WBookRank;
-        bRank =
-          Wbook * b.libBooksCounts -
-          WtoSign * b.libDaysToSign +
-          (booksScore(b.libBookIds) / b.libBooksCounts) * WBookRank;
-        return bRank - aRank;
-      });
-
-    const ansArr = [orderByDate.length];
-    const scannedBooks = [];
+    const ansArr = [];
     orderByDate.forEach(lib => {
       let booksToSendCount = scaningDays * lib.libBooksPerDay;
       booksToSendCount = Math.min(booksToSendCount, lib.libBooksCounts);
 
-      const row0 = lib.libIndex + " " + booksToSendCount;
+      const _local = lib.libBookIds
+        // .filter(b => !scannedBooks[b])
+        .sort((a, b) => scoreOfBooks[b] - scoreOfBooks[a])
+        .slice(0, booksToSendCount);
 
-      scannedBooks.push(
-        ...lib.libBookIds
-          .sort((a, b) => scoreOfBooks[b] - scoreOfBooks[a])
-          .slice(0, booksToSendCount)
-      );
-      const row1 = scannedBooks.join(" ");
-
-      ansArr.push(row0, row1);
+      booksToSendCount = _local.length;
+      if (booksToSendCount != 0) {
+        // scannedBooks = { ...scannedBooks, ..._local };
+        const row0 = lib.libIndex + " " + booksToSendCount;
+        const row1 = _local.join(" ");
+        ansArr.push(row0, row1);
+      }
     });
+
+    ansArr.unshift(ansArr.length / 2);
 
     const answer = ansArr.join("\n");
 
