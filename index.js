@@ -59,23 +59,23 @@ function solveForFile(fileName) {
     scoreOfBooks
   }) {
     const orderByDate = libConfigs
-      // .filter(d => d.libDaysToSign < (scaningDays * 2) / 3)
+      .filter(d => d.libDaysToSign < scaningDays / 2)
       .sort((a, b) => a.libDaysToSign - b.libDaysToSign);
 
     const ansArr = [orderByDate.length];
     orderByDate.forEach(lib => {
       let booksToSendCount =
         (scaningDays - lib.libDaysToSign) * lib.libBooksPerDay;
-      scaningDays -= lib.libDaysToSign;
-      const row0 =
-        lib.libIndex + " " + Math.min(booksToSendCount, lib.libBooksCounts);
+      booksToSendCount = Math.min(booksToSendCount, lib.libBooksCounts);
+
+      const row0 = lib.libIndex + " " + booksToSendCount;
 
       const row1 = lib.libBookIds
         .sort((a, b) => scoreOfBooks[b] - scoreOfBooks[a])
         .slice(0, booksToSendCount)
         .join(" ");
+
       ansArr.push(row0, row1);
-      //   console.log("Zoeooo", { booksToSendCount, scaningDays, lib, row0, row1 });
     });
 
     const answer = ansArr.join("\n");
