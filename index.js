@@ -58,26 +58,40 @@ function solveForFile(fileName) {
     libConfigs,
     scoreOfBooks
   }) {
+    const booksScore = libBooks =>
+      libBooks.reduce((acc, l) => (acc += scoreOfBooks[l]), 0);
+    const Wbook = 70;
+    const WtoSign = 20;
+    const WBookRank = 10;
     const orderByDate = libConfigs
       //   .filter(d => d.libDaysToSign < scaningDays / 2)
+
       .sort((a, b) => {
-          // a.libDaysToSign - b.libDaysToSign;
-          aRank = a.libBooksCounts - a.libDaysToSign;
-          bRank = b.libBooksCounts - b.libDaysToSign;
-          return bRank - aRank 
+        aRank =
+          Wbook * a.libBooksCounts -
+          WtoSign * a.libDaysToSign +
+          (booksScore(a.libBookIds) / a.libBooksCounts) * WBookRank;
+        bRank =
+          Wbook * b.libBooksCounts -
+          WtoSign * b.libDaysToSign +
+          (booksScore(b.libBookIds) / b.libBooksCounts) * WBookRank;
+        return bRank - aRank;
       });
 
     const ansArr = [orderByDate.length];
+    const scannedBooks = [];
     orderByDate.forEach(lib => {
       let booksToSendCount = scaningDays * lib.libBooksPerDay;
       booksToSendCount = Math.min(booksToSendCount, lib.libBooksCounts);
 
       const row0 = lib.libIndex + " " + booksToSendCount;
 
-      const row1 = lib.libBookIds
-        .sort((a, b) => scoreOfBooks[b] - scoreOfBooks[a])
-        .slice(0, booksToSendCount)
-        .join(" ");
+      scannedBooks.push(
+        ...lib.libBookIds
+          .sort((a, b) => scoreOfBooks[b] - scoreOfBooks[a])
+          .slice(0, booksToSendCount)
+      );
+      const row1 = scannedBooks.join(" ");
 
       ansArr.push(row0, row1);
     });
