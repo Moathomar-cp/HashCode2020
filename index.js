@@ -6,7 +6,7 @@ const fileNames = `a_example.txt
  e_so_many_books.txt
  f_libraries_of_the_world.txt`
   .split("\n")
-  //   .slice(0, 1)
+//   .slice(0, 1)
   .filter(t => t && !t.includes(".out"))
   .map(fileName => fileName.trim())
   .map(solveForFile);
@@ -78,8 +78,7 @@ function solveForFile(fileName) {
       return bRank - aRank;
     });
 
-
-    //reset to update score D: ! 
+    //reset to update score D: !
     scannedBooks = {};
 
     const ansArr = [];
@@ -90,17 +89,17 @@ function solveForFile(fileName) {
       const _local = lib.libBookIds
         .filter(b => !scannedBooks[b])
         .sort((a, b) => scoreOfBooks[b] - scoreOfBooks[a])
-        .slice(0, booksToSendCount);
+        .slice(0, booksToSendCount)
+        .map(d=> (scannedBooks[d]=true,d));
 
       booksToSendCount = _local.length;
       if (booksToSendCount != 0) {
-        scannedBooks = { ...scannedBooks, ..._local };
         const row0 = lib.libIndex + " " + booksToSendCount;
         const row1 = _local.join(" ");
         ansArr.push(row0, row1);
       }
+    //   console.log(scannedBooks, _local);
     });
-
     ansArr.unshift(ansArr.length / 2);
 
     const answer = ansArr.join("\n");
