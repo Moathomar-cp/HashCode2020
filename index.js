@@ -17,7 +17,7 @@ function solveForFile(fileName) {
     .readFileSync(__dirname + "/" + fileName, "utf-8")
     .split("\n");
 
-  const [booksCount, librariesCount, scaningDays] = lines
+  const [booksCount, librariesCount, scanningDays] = lines
     .shift()
     .split(" ")
     .map(Number);
@@ -27,7 +27,7 @@ function solveForFile(fileName) {
     .split(" ")
     .map(Number);
 
-  const libConfigs = Array.from({ length: librariesCount }).map(
+  const librariesArr = Array.from({ length: librariesCount }).map(
     (_, libIndex) => {
       const [libBooksCounts, libDaysToSign, libBooksPerDay] = lines
         .shift()
@@ -49,36 +49,35 @@ function solveForFile(fileName) {
     }
   );
 
-  solve({ booksCount, librariesCount, scaningDays, libConfigs, scoreOfBooks });
+  solve({ scanningDays, librariesArr, scoreOfBooks });
 
-  function solve({
-    booksCount,
-    librariesCount,
-    scaningDays,
-    libConfigs,
-    scoreOfBooks
-  }) {
+  function solve({ scanningDays, librariesArr, scoreOfBooks }) {
+    let scannedBooks = {};
+
     const booksScore = libBooks =>
-      libBooks.reduce((acc, l) => (acc += scoreOfBooks[l]), 0);
+      libBooks.reduce((acc, l) => {
+        if (scannedBooks[l]) return acc;
+        scannedBooks[l] = true;
+        return (acc += scoreOfBooks[l]);
+      }, 0);
 
-    const Wbook = 50;
-    const WtoSign = 5;
-    const WBookRank = 10;
-    const orderByDate = libConfigs.sort((a, b) => {
+    const Wbook = 3;
+    const WtoSign = 97;
+    const orderByDate = librariesArr.sort((a, b) => {
       aRank =
         Wbook * a.libBooksCounts -
         WtoSign * a.libDaysToSign +
-        (booksScore(a.libBookIds) / a.libBooksCounts) * WBookRank;
+        booksScore(a.libBookIds) / a.libBooksCounts;
       bRank =
         Wbook * b.libBooksCounts -
         WtoSign * b.libDaysToSign +
-        (booksScore(b.libBookIds) / b.libBooksCounts) * WBookRank;
+        booksScore(b.libBookIds) / b.libBooksCounts;
       return bRank - aRank;
     });
 
     const ansArr = [];
     orderByDate.forEach(lib => {
-      let booksToSendCount = scaningDays * lib.libBooksPerDay;
+      let booksToSendCount = scanningDays * lib.libBooksPerDay;
       booksToSendCount = Math.min(booksToSendCount, lib.libBooksCounts);
 
       const _local = lib.libBookIds
