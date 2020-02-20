@@ -25,10 +25,7 @@ function solveForFile(fileName) {
   const scoreOfBooks = lines
     .shift()
     .split(" ")
-    .map(Number)
-    // to Store
-    .map((score, i) => [i, score])
-    .sort((a, b) => b[1] - a[1]);
+    .map(Number);
 
   const libConfigs = Array.from({ length: librariesCount }).map(
     (_, libIndex) => {
@@ -36,7 +33,7 @@ function solveForFile(fileName) {
         .shift()
         .split(" ")
         .map(Number);
-``
+      ``;
       const libBookIds = lines
         .shift()
         .split(" ")
@@ -69,11 +66,14 @@ function solveForFile(fileName) {
     orderByDate.forEach(lib => {
       let booksToSendCount =
         (scaningDays - lib.libDaysToSign) * lib.libBooksPerDay;
+      scaningDays -= lib.libDaysToSign;
       const row0 =
         lib.libIndex + " " + Math.min(booksToSendCount, lib.libBooksCounts);
-        // scoreOfBooks.slice(0, booksToSendCount).map(([index,score])=>{
-        //     lib.libBookIds[index]        })
-      const row1 = lib.libBookIds.sort((a,b)=>b-a).slice(0, booksToSendCount).join(" ");
+
+      const row1 = lib.libBookIds
+        .sort((a, b) => scoreOfBooks[b] - scoreOfBooks[a])
+        .slice(0, booksToSendCount)
+        .join(" ");
       ansArr.push(row0, row1);
       //   console.log("Zoeooo", { booksToSendCount, scaningDays, lib, row0, row1 });
     });
