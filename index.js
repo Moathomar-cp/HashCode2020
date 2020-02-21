@@ -62,14 +62,12 @@ function solveForFile(fileName) {
     const WtoSign = 1;
 
     const booksScore = libBooks => {
-      const sum = libBooks.reduce((acc, l) => {
-        return (acc += scoreOfBooks[l] * 1.7);
-      }, 0);
-      return booksRankWait * sum; 
+      const sum = libBooks.reduce((acc, l) => (acc += scoreOfBooks[l]), 0);
+      return booksRankWait * sum;
     };
 
     const rankLibrary = lib =>
-      Math.ceil(10 * (booksScore(lib.libBookIds) / lib.libDaysToSign));
+      Math.ceil(booksScore(lib.libBookIds) / lib.libDaysToSign);
 
     const orderByDateDesc = librariesArr.sort((a, b) => {
       return rankLibrary(b) - rankLibrary(a);
