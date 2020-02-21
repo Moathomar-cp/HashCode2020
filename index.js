@@ -62,18 +62,10 @@ function solveForFile(fileName) {
     const WtoSign = 1;
 
     const booksScore = libBooks => {
-    //   const scores = [];
       const sum = libBooks.reduce((acc, l) => {
-        // if (scannedBooks[l]) return (acc += 0);
-        // scannedBooks[l] = true;
-        // scores.push(scoreOfBooks[l] * 1.7);
         return (acc += scoreOfBooks[l] * 1.7);
       }, 0);
-      //   scores = libBooks.map(l => scoreOfBooks[l]);
-      return booksRankWait * sum; // / math.variance(scores);
-      //   if (scores.length) {
-      //   }
-      //   return booksRankWait * sum; //
+      return booksRankWait * sum; 
     };
 
     const rankLibrary = lib =>
