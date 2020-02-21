@@ -71,7 +71,7 @@ function solveForFile(fileName) {
       }, 0);
       //   scores = libBooks.map(l => scoreOfBooks[l]);
       if (scores.length) {
-        return (booksRankWait * math.mean(scores));// / math.variance(scores);
+        return (booksRankWait * math.mean(scores)) / math.variance(scores);
       }
       return booksRankWait * sum; //
     };
