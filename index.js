@@ -57,29 +57,27 @@ function solveForFile(fileName) {
   function solve({ scanningDays, librariesArr, scoreOfBooks }) {
     let scannedBooks = {};
 
-    const booksRankWait = 10;
+    const booksRankWait = 1;
     const Wbook = 3;
-    const WtoSign = 90;
+    const WtoSign = 1;
 
     const booksScore = libBooks => {
-      const scores = [];
+    //   const scores = [];
       const sum = libBooks.reduce((acc, l) => {
-        if (scannedBooks[l]) return (acc += scoreOfBooks[l] * 0.5);
-        scannedBooks[l] = true;
-        scores.push(scoreOfBooks[l] * 1.7);
+        // if (scannedBooks[l]) return (acc += 0);
+        // scannedBooks[l] = true;
+        // scores.push(scoreOfBooks[l] * 1.7);
         return (acc += scoreOfBooks[l] * 1.7);
       }, 0);
       //   scores = libBooks.map(l => scoreOfBooks[l]);
-      if (scores.length) {
-        return (booksRankWait * math.mean(scores));// / math.variance(scores);
-      }
-      return booksRankWait * sum; //
+      return booksRankWait * sum; // / math.variance(scores);
+      //   if (scores.length) {
+      //   }
+      //   return booksRankWait * sum; //
     };
 
     const rankLibrary = lib =>
-      lib.libBooksCounts +
-      booksScore(lib.libBookIds) -
-      WtoSign * lib.libDaysToSign;
+      Math.ceil(10 * (booksScore(lib.libBookIds) / lib.libDaysToSign));
 
     const orderByDateDesc = librariesArr.sort((a, b) => {
       return rankLibrary(b) - rankLibrary(a);
